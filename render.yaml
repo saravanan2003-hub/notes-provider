@@ -8,6 +8,8 @@ services:
     envVars:
       - key: ISSUER
         value: https://notes-dex.onrender.com
+      - key: MANAGE_API_KEY
+        generateValue: true
 
   - type: web
     name: notes-provider

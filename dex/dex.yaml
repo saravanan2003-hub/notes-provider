@@ -4,12 +4,12 @@ storage:
   type: memory
 
 web:
-  http: 0.0.0.0:5556
+  http: 0.0.0.0:15556
   allowedOrigins:
     - "*"
 
 grpc:
-  addr: 0.0.0.0:5557
+  addr: 0.0.0.0:15557
 
 oauth2:
   responseTypes:
