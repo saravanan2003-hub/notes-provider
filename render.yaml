@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: notes-dex
+    runtime: docker
+    dockerfilePath: ./dex/Dockerfile
+    dockerContext: ./dex
+    plan: free
+    envVars:
+      - key: ISSUER
+        value: https://notes-dex.onrender.com
+
+  - type: web
+    name: notes-provider
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /healthz
+    envVars:
+      - key: OIDC_ISSUER
+        value: https://notes-dex.onrender.com
+      - key: OIDC_BACKEND_URL
+        value: https://notes-dex.onrender.com
+      - key: OIDC_ACCEPTED_AUDIENCES
+        value: notes-public-pkce,notes-confidential,notes-machine
+      - key: ADMIN_API_KEY
+        generateValue: true

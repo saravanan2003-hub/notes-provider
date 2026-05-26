@@ -1,0 +1,27 @@
+services:
+  dex:
+    build:
+      context: ./dex
+      dockerfile: Dockerfile
+    ports:
+      - "5556:5556"
+      - "5557:5557"
+    environment:
+      ISSUER: "http://dex:5556"
+
+  notes-provider:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - dex
+    environment:
+      PORT: "8000"
+      OIDC_ISSUER: "http://dex:5556"
+      OIDC_BACKEND_URL: "http://dex:5556"
+      OIDC_ACCEPTED_AUDIENCES: "notes-public-pkce,notes-confidential,notes-machine"
+      OIDC_JWKS_CACHE_TTL: "300"
+      OIDC_LEEWAY_SECONDS: "30"
+      ADMIN_API_KEY: "dev-admin-key"

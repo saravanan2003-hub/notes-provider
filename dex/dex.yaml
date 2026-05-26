@@ -1,0 +1,39 @@
+issuer: $ISSUER
+
+storage:
+  type: memory
+
+web:
+  http: 0.0.0.0:5556
+  allowedOrigins:
+    - "*"
+
+grpc:
+  addr: 0.0.0.0:5557
+
+oauth2:
+  responseTypes:
+    - code
+  skipApprovalScreen: true
+  passwordConnector: local
+
+expiry:
+  idTokens: 2m
+  signingKeys: 6h
+
+enablePasswordDB: true
+
+staticPasswords:
+  - email: "alice@example.com"
+    hash: "$2b$10$iTA0DGjsarPEGkqMI1igwukHeexjwExdBV7jyWQkCNhI1IFk05NKC"
+    username: "alice"
+    userID: "user-alice"
+  - email: "bob@example.com"
+    hash: "$2b$10$Uyb//SCBy1MGyDIf6.Oa7OP5fOG.m63NG.RewxPP5FTz1J4ly5YUW"
+    username: "bob"
+    userID: "user-bob"
+  - email: "carol@example.com"
+    hash: "$2b$10$Xo5wWOrwdoXKc6ctUaAbIuuunuNOBNDHK2xEQSHSEWyh/vg9Gtxym"
+    username: "carol"
+    userID: "user-carol"
+
