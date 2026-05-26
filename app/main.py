@@ -14,7 +14,7 @@ from .routes_admin import router as admin_router
 from .routes_notes import router as notes_router
 
 _OIDC_BASE = os.environ.get("OIDC_BACKEND_URL", "http://localhost:5556").rstrip("/")
-_OIDC_PROXY_PATHS = ("/auth", "/token", "/keys", "/.well-known")
+_OIDC_PROXY_PATHS = ("/auth", "/token", "/keys", "/.well-known", "/theme", "/static")
 logging.basicConfig(
     level=logging.DEBUG,
     format='{"time":"%(asctime)s","level":"%(levelname)s","msg":"%(message)s"}',

@@ -101,6 +101,14 @@ async def delete_redirect_uri(request: Request, x_admin_key: str = Header(...)):
 
 # ── Proxy: forward everything else to Dex ────────────────────────────────────
 
+# httpx decompresses content automatically but keeps Content-Encoding header —
+# strip these so the browser doesn't try to decompress already-decoded bytes.
+_HOP_BY_HOP = {
+    "content-encoding", "content-length", "transfer-encoding",
+    "connection", "keep-alive", "te", "trailers", "upgrade",
+}
+
+
 @app.api_route(
     "/{path:path}",
     methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
@@ -110,18 +118,23 @@ async def proxy_to_dex(path: str, request: Request):
     if request.url.query:
         url += "?" + request.url.query
     body = await request.body()
+    req_headers = {
+        k: v for k, v in request.headers.items()
+        if k.lower() not in ("host", "accept-encoding")
+    }
     async with httpx.AsyncClient() as client:
         resp = await client.request(
             method=request.method,
             url=url,
-            headers={k: v for k, v in request.headers.items() if k.lower() != "host"},
+            headers=req_headers,
             content=body,
             follow_redirects=False,
         )
+    resp_headers = {k: v for k, v in resp.headers.items() if k.lower() not in _HOP_BY_HOP}
     return Response(
         content=resp.content,
         status_code=resp.status_code,
-        headers=dict(resp.headers),
+        headers=resp_headers,
     )
 
 
