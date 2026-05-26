@@ -11,6 +11,10 @@ RUN wget -q -O /tmp/grpcurl.tar.gz \
     && tar xz -C /usr/local/bin/ -f /tmp/grpcurl.tar.gz grpcurl \
     && rm /tmp/grpcurl.tar.gz
 
+# Download Dex API proto at build time — avoids runtime network dependency
+RUN wget -q -O /etc/dex/dex_api.proto \
+      https://raw.githubusercontent.com/dexidp/dex/v2.41.1/api/v2/api.proto
+
 # Install Python deps in a venv to avoid system-package conflicts
 COPY requirements-manage.txt /tmp/requirements-manage.txt
 RUN python3 -m venv /opt/manage-venv \

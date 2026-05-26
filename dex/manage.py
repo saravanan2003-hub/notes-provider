@@ -12,8 +12,8 @@ app = FastAPI(title="Dex Management API")
 MANAGE_API_KEY = os.environ.get("MANAGE_API_KEY", "dev-manage-key")
 DEX_HTTP = "http://localhost:15556"
 GRPC_HOST = "localhost:15557"
-PROTO_PATH = "/tmp/dex_api.proto"
-PROTO_URL = "https://raw.githubusercontent.com/dexidp/dex/v2.41.1/api/v2/api.proto"
+PROTO_DIR = "/etc/dex"
+PROTO_FILE = "dex_api.proto"
 
 
 def _require_admin(x_admin_key: str) -> None:
@@ -21,18 +21,12 @@ def _require_admin(x_admin_key: str) -> None:
         raise HTTPException(status_code=403, detail="Invalid admin key")
 
 
-def _ensure_proto() -> None:
-    if not os.path.exists(PROTO_PATH):
-        subprocess.run(["wget", "-q", "-O", PROTO_PATH, PROTO_URL], check=True)
-
-
 def _grpc(method: str, data: dict) -> dict:
-    _ensure_proto()
     result = subprocess.run(
         [
             "grpcurl", "-plaintext",
-            "-import-path", "/tmp",
-            "-proto", "dex_api.proto",
+            "-import-path", PROTO_DIR,
+            "-proto", PROTO_FILE,
             "-d", json.dumps(data),
             GRPC_HOST,
             f"api.Dex/{method}",
