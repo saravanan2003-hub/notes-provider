@@ -39,8 +39,12 @@ def _grpc(method: str, data: dict) -> dict:
         ],
         capture_output=True,
         text=True,
-        check=True,
     )
+    if result.returncode != 0:
+        raise HTTPException(
+            status_code=500,
+            detail=f"gRPC {method} failed: {result.stderr.strip() or result.stdout.strip()}",
+        )
     return json.loads(result.stdout) if result.stdout.strip() else {}
 
 

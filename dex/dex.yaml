@@ -21,28 +21,6 @@ expiry:
   idTokens: 2m
   signingKeys: 6h
 
-staticClients:
-  - id: notes-public-pkce
-    name: Notes Public PKCE
-    public: true
-    redirectURIs:
-      - http://localhost:8765/callback
-      - http://127.0.0.1:8765/callback
-
-  - id: notes-confidential
-    secret: notes-confidential-secret
-    name: Notes Confidential
-    redirectURIs:
-      - http://localhost:8765/callback
-      - http://127.0.0.1:8765/callback
-
-  - id: notes-machine
-    secret: notes-machine-secret
-    name: Notes Machine
-    redirectURIs:
-      - http://localhost:8765/callback
-      - http://127.0.0.1:8765/callback
-
 enablePasswordDB: true
 
 staticPasswords:
