@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, RedirectResponse, Response
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from .auth import clear_auth_context, resolve_user_for_mcp, set_auth_context
@@ -101,6 +101,8 @@ async def oauth_protected_resource():
 )
 async def oidc_proxy(path: str, request: Request):
     full_path = "/" + path
+    if full_path == "/mcp":
+        return RedirectResponse(url="/mcp/", status_code=307)
     if not any(full_path.startswith(p) for p in _OIDC_PROXY_PATHS):
         return JSONResponse({"detail": "Not Found"}, status_code=404)
     url = _OIDC_BASE + full_path

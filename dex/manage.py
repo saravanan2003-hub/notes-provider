@@ -1,5 +1,6 @@
 import json
 import os
+import secrets
 import subprocess
 
 import httpx
@@ -99,8 +100,6 @@ async def delete_redirect_uri(request: Request, x_admin_key: str = Header(...)):
     return {"ok": True, "action": "deleted", "client_id": client_id, "redirect_uris": uris}
 
 
-# ── Proxy: forward everything else to Dex ────────────────────────────────────
-
 # httpx decompresses content automatically but keeps Content-Encoding header —
 # strip these so the browser doesn't try to decompress already-decoded bytes.
 _HOP_BY_HOP = {
@@ -108,6 +107,45 @@ _HOP_BY_HOP = {
     "connection", "keep-alive", "te", "trailers", "upgrade",
 }
 
+# ── OAuth discovery & DCR ────────────────────────────────────────────────────
+
+@app.get("/.well-known/oauth-authorization-server")
+async def oauth_authorization_server_metadata():
+    """RFC 8414 Authorization Server Metadata — proxy from Dex openid-configuration."""
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(f"{DEX_HTTP}/.well-known/openid-configuration")
+    resp_headers = {k: v for k, v in resp.headers.items() if k.lower() not in _HOP_BY_HOP}
+    return Response(content=resp.content, status_code=resp.status_code, headers=resp_headers)
+
+
+@app.post("/register", status_code=201)
+async def dynamic_client_registration(request: Request):
+    """RFC 7591 Dynamic Client Registration — creates a new Dex client via gRPC."""
+    body = await request.json()
+    redirect_uris = body.get("redirect_uris", [])
+    if not redirect_uris:
+        raise HTTPException(status_code=400, detail="redirect_uris is required")
+    client_id = f"dcr-{secrets.token_hex(8)}"
+    client_secret = secrets.token_hex(32)
+    _grpc("CreateClient", {
+        "client": {
+            "id": client_id,
+            "secret": client_secret,
+            "name": body.get("client_name", "DCR Client"),
+            "redirect_uris": redirect_uris,
+        }
+    })
+    return {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "redirect_uris": redirect_uris,
+        "token_endpoint_auth_method": "client_secret_post",
+        "grant_types": ["authorization_code", "refresh_token"],
+        "response_types": ["code"],
+    }
+
+
+# ── Proxy: forward everything else to Dex ────────────────────────────────────
 
 @app.api_route(
     "/{path:path}",
