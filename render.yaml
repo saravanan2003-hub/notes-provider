@@ -25,5 +25,7 @@ services:
         value: https://notes-dex.onrender.com
       - key: OIDC_ACCEPTED_AUDIENCES
         value: notes-public-pkce,notes-confidential,notes-machine
+      - key: MCP_RESOURCE_URL
+        value: https://notes-provider-20dy.onrender.com
       - key: ADMIN_API_KEY
         generateValue: true

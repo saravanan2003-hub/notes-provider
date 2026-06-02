@@ -12,6 +12,7 @@ from .config import (
     BASIC_USERS,
     BEARER_TOKENS,
     API_KEYS,
+    MCP_RESOURCE_URL,
     OIDC_ISSUER_URL,
     OIDC_ACCEPTED_AUDIENCES,
     OIDC_LEEWAY_SECONDS,
@@ -131,7 +132,7 @@ def resolve_user(request: Request) -> Tuple[str, str]:
         detail="Authentication required",
         headers={
             "WWW-Authenticate": (
-                f'Bearer resource_metadata="{OIDC_ISSUER_URL}/.well-known/oauth-protected-resource"'
+                f'Bearer resource_metadata="{MCP_RESOURCE_URL}/.well-known/oauth-protected-resource"'
             )
         },
     )

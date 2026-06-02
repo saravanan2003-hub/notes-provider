@@ -3,6 +3,9 @@ import os
 ADMIN_API_KEY: str = os.environ.get("ADMIN_API_KEY", "dev-admin-key")
 
 OIDC_ISSUER_URL: str = os.environ.get("OIDC_ISSUER", "http://localhost:8000")
+# Public URL of this MCP server itself (not the OIDC issuer).
+# Used in /.well-known/oauth-protected-resource and WWW-Authenticate headers.
+MCP_RESOURCE_URL: str = os.environ.get("MCP_RESOURCE_URL", "http://localhost:8000")
 OIDC_BACKEND_URL: str = os.environ.get("OIDC_BACKEND_URL", OIDC_ISSUER_URL)
 OIDC_ACCEPTED_AUDIENCES: list[str] = [
     a.strip()

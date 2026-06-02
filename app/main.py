@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse, Response
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from .auth import clear_auth_context, resolve_user_for_mcp, set_auth_context
-from .config import OIDC_ISSUER_URL
+from .config import MCP_RESOURCE_URL, OIDC_ISSUER_URL
 from .mcp_server import mcp
 from .routes_admin import router as admin_router
 from .routes_notes import router as notes_router
@@ -87,7 +87,7 @@ async def healthz():
 @app.get("/.well-known/oauth-protected-resource")
 async def oauth_protected_resource():
     return {
-        "resource": OIDC_ISSUER_URL,
+        "resource": MCP_RESOURCE_URL,
         "authorization_servers": [OIDC_ISSUER_URL],
         "bearer_methods_supported": ["header"],
         "scopes_supported": ["openid", "profile", "email", "offline_access"],
