@@ -131,10 +131,7 @@ def resolve_user(request: Request) -> Tuple[str, str]:
         detail="Authentication required",
         headers={
             "WWW-Authenticate": (
-                f'Bearer realm="notes", '
-                f'authorization_uri="{OIDC_ISSUER_URL}/auth", '
-                f'token_uri="{OIDC_ISSUER_URL}/token", '
-                f'Basic, ApiKey'
+                f'Bearer resource_metadata="{OIDC_ISSUER_URL}/.well-known/oauth-protected-resource"'
             )
         },
     )
