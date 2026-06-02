@@ -6,7 +6,7 @@ import subprocess
 import httpx
 import uvicorn
 from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.responses import Response
+from fastapi.responses import JSONResponse, Response
 
 app = FastAPI(title="Dex Management API")
 
@@ -111,11 +111,14 @@ _HOP_BY_HOP = {
 
 @app.get("/.well-known/oauth-authorization-server")
 async def oauth_authorization_server_metadata():
-    """RFC 8414 Authorization Server Metadata — proxy from Dex openid-configuration."""
+    """RFC 8414 Authorization Server Metadata — proxied from Dex openid-configuration
+    with registration_endpoint injected so clients can discover DCR support."""
     async with httpx.AsyncClient() as client:
         resp = await client.get(f"{DEX_HTTP}/.well-known/openid-configuration")
-    resp_headers = {k: v for k, v in resp.headers.items() if k.lower() not in _HOP_BY_HOP}
-    return Response(content=resp.content, status_code=resp.status_code, headers=resp_headers)
+    data = resp.json()
+    issuer = data.get("issuer", "").rstrip("/")
+    data["registration_endpoint"] = f"{issuer}/register"
+    return JSONResponse(content=data, status_code=resp.status_code)
 
 
 @app.post("/register", status_code=201)
