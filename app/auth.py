@@ -86,7 +86,10 @@ def _validate_oidc_token(token: str) -> Optional[Tuple[str, str]]:
 
     aud = payload.get("aud")
     aud_list: list[str] = aud if isinstance(aud, list) else ([aud] if aud else [])
-    if OIDC_ACCEPTED_AUDIENCES and not any(a in OIDC_ACCEPTED_AUDIENCES for a in aud_list):
+    if OIDC_ACCEPTED_AUDIENCES and not any(
+        a in OIDC_ACCEPTED_AUDIENCES or a.startswith("dcr-")
+        for a in aud_list
+    ):
         return None
 
     sub: str = payload.get("sub", "")
