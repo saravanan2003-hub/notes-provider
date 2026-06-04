@@ -26,4 +26,6 @@ BEARER_TOKENS: dict[str, str] = {
 
 API_KEYS: dict[str, str] = {
     "e2e-apikey-abc12345": "e2e-apikey-user",
+    "Token e2e-apikey-abc12345": "e2e-apikey-user",       # prefix "Token " via auth_field_mutations
+    "e2e-apikey-abc12345/token": "e2e-apikey-user",       # suffix "/token" via auth_field_mutations
 }
