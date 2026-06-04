@@ -94,6 +94,15 @@ async def oauth_protected_resource():
     }
 
 
+@app.get("/user/verify")
+async def user_verify(
+    auth_request_id: str | None = None,
+    state: str | None = None,
+):
+    """Scalekit user-verification callback — receives auth_request_id and state after OAuth consent."""
+    return {"auth_request_id": auth_request_id, "state": state}
+
+
 @app.api_route(
     "/{path:path}",
     methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
