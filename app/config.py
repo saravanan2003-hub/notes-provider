@@ -25,7 +25,12 @@ BEARER_TOKENS: dict[str, str] = {
 }
 
 API_KEYS: dict[str, str] = {
+    # Standard key — used by regular API key tests
     "e2e-apikey-abc12345": "e2e-apikey-user",
-    "Token e2e-apikey-abc12345": "e2e-apikey-user",       # prefix "Token " via auth_field_mutations
-    "e2e-apikey-abc12345/token": "e2e-apikey-user",       # suffix "/token" via auth_field_mutations
+    # Prefix mutation key — raw value intentionally absent; only the prefixed form is valid.
+    # If Scalekit does not apply the "Token " prefix, the tool call returns 401.
+    "Token e2e-prefix-key-xyz": "e2e-apikey-user",
+    # Suffix mutation key — raw value intentionally absent; only the suffixed form is valid.
+    # If Scalekit does not apply the "/token" suffix, the tool call returns 401.
+    "e2e-suffix-key-xyz/token": "e2e-apikey-user",
 }
