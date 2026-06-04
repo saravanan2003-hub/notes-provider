@@ -58,7 +58,8 @@ create_client "notes-machine" '{
   }
 }'
 
-echo "All clients ready. Starting management API on port 5556..."
+LISTEN_PORT=${PORT:-5556}
+echo "All clients ready. Starting management API on port ${LISTEN_PORT}..."
 
 # 5. Start management API in foreground (proxies OIDC traffic to Dex + management endpoints)
-exec /opt/manage-venv/bin/uvicorn manage:app --host 0.0.0.0 --port 5556 --app-dir /etc/dex
+exec /opt/manage-venv/bin/uvicorn manage:app --host 0.0.0.0 --port "${LISTEN_PORT}" --app-dir /etc/dex
