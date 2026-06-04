@@ -9,7 +9,7 @@ services:
       - key: ISSUER
         value: https://notes-dex.onrender.com
       - key: MANAGE_API_KEY
-        generateValue: true
+        value: dex-api-key
 
   - type: web
     name: notes-provider
